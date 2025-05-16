@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Reward System</title>
+</head>
+<body>
+  <h1>Welcome to Event Reward System</h1>
+
+  <button onclick="window.location.href='/login'">Login</button>
+  <button onclick="window.location.href='/register'">Register</button>
+  
+  <script>
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      window.location.href = '/login';  // 로그인 페이지로 이동
+    });
+
+    document.getElementById('registerBtn').addEventListener('click', function() {
+      window.location.href = '/register';  // 회원가입 페이지로 이동
+    });
+  </script>
+</body>
+</html>
