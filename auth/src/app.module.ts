@@ -34,12 +34,18 @@ import { AuthModule } from './auth/auth.module';
 })
 export class AppModule {}
 
-/*
-// 회원가입 : http://localhost:3001/auth/register?username=testuser&password=123456&role=USER
+/*  
+- 회원가입 : http://localhost:3001/auth/register
 {
-    "statusCode": 500,
-    "message": "Internal server error"
+	"username": "testuser",
+    "password":"123123",
+    "role":"USER"
 }
-// 로그인 : http://localhost:3001/auth/login?username=testuser&password=123456
+
+// 로그인 : http://localhost:3001/auth/login
+{
+  "username": "testuser",
+  "password": "123123"
+}
 */
 

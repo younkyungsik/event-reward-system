@@ -1,46 +1,3 @@
-/*
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-}
-*/
-
-/*
-import { Controller, Get } from '@nestjs/common';
-import { Roles } from './auth/roles.decorator';
-import { Role } from './auth/role.enum';
-
-@Controller('events')
-export class EventsController {
-  @Get()
-  @Roles(Role.OPERATOR, Role.ADMIN, Role.USER)  // OPERATOR나 ADMIN, USER만 접근 가능
-  findAll() {
-    return "이벤트 목록 조회";
-  }
-}
-*/
-/*
-import { Controller, Get } from '@nestjs/common';
-import { Roles } from './auth/roles.decorator';
-import { Role } from './auth/role.enum';
-
-@Controller('events')
-export class EventsController {
-  @Get()
-  @Roles(Role.OPERATOR, Role.ADMIN)  // OPERATOR나 ADMIN만 접근 가능
-  findAll() {
-    return "이벤트 목록 조회";
-  }
-}
-*/
 import {
   Controller,
   Req,
@@ -55,38 +12,49 @@ import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 
-@Controller('events')
-@UseGuards(JwtAuthGuard, RolesGuard)
-export class EventsProxyController {
+@Controller()
+export class AppController {
   constructor(private readonly httpService: HttpService) {}
 
-  @All(['', '*'])
-  async proxy(@Req() req: ExpressRequest, @Res() res: Response, @Request() user: any) {
-    //const eventServiceUrl = `http://event:3000${req.originalUrl}`;
-    const eventServiceUrl = `http://event:3000${req.originalUrl.replace(/^\/events/, '') || '/'}`;
-    //console.log(`${eventServiceUrl}`);
-    console.log(`[Gateway Proxy] Forwarding ${req.method} ${req.originalUrl} → ${eventServiceUrl}`);
+  // 초기 인증 없이 허용되는 경로
+  @All(['/register', '/login'])
+  async authProxy(@Req() req: ExpressRequest, @Res() res: Response) {
+    const authServiceUrl = `http://auth:3000/auth${req.originalUrl}`;
+    return this.forwardRequest(req, res, authServiceUrl);
+  }
+
+  // 인증 필요: /events 전체
+  @All(['/events', '/rewards', '/reward-requests'])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async eventProxy(@Req() req: ExpressRequest, @Res() res: Response) {
+    const eventServiceUrl = `http://event:3000${req.originalUrl}`;
+    return this.forwardRequest(req, res, eventServiceUrl);
+  }
+
+  // 공통 요청 전달 처리
+  private async forwardRequest(req: ExpressRequest, res: Response, targetUrl: string) {
+    console.log(`[Gateway] ${req.method} ${req.originalUrl} → ${targetUrl}`);
+    console.log(`[Gateway] Body: `, req.body);
     const headers = {
       ...req.headers,
-      host: undefined, // 호스트 헤더는 제거
+      host: undefined,
+      'content-length': undefined,
     };
-    console.log('req.body:', req.body);
+
     try {
       const response = await firstValueFrom(
         this.httpService.request({
           method: req.method as any,
-          url: eventServiceUrl,
+          url: targetUrl,
           headers,
           data: req.body,
         }),
       );
-      res.status(response.status).json(response.data);
+      return res.status(response.status).json(response.data);
     } catch (error) {
-      if (error.response) {
-        res.status(error.response.status).json(error.response.data);
-      } else {
-        res.status(500).json({ message: 'Proxy Error', error: error.message });
-      }
+      const status = error?.response?.status || 500;
+      const data = error?.response?.data || { message: 'Proxy Error' };
+      return res.status(status).json(data);
     }
   }
 }

@@ -10,7 +10,7 @@ import { AuthModule } from '../auth/auth.module';
   forwardRef(() => AuthModule)],
   providers: [UsersService],
   controllers: [UsersController],
-  exports: [UsersService],
+  exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}
 

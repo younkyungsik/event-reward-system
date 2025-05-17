@@ -1,26 +1,22 @@
-/*
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './auth/jwt.strategy';
+import { EventsModule } from './events/events.module';
+import { RewardsModule } from './rewards/rewards.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongo:27017/auth'), // 도커 내 서비스 이름 사용
+    ConfigModule.forRoot(), // 환경 변수 로딩
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URL'),
+      }),
+      inject: [ConfigService],
+    }),
+    EventsModule, RewardsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-*/
-
-// event/src/app.module.ts
-import { Module } from '@nestjs/common';
-import { EventController } from './event.controller';
-
-@Module({
-  imports: [],
-  controllers: [EventController],
-  providers: [],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

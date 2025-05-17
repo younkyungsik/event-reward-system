@@ -15,7 +15,7 @@ services:
     depends_on:
       - mongo
     env_file:
-    - ./auth/.env
+    - .env
     
   event:
     build: ./event
@@ -23,6 +23,8 @@ services:
       - "3002:3000"
     depends_on:
       - mongo
+    env_file:
+    - .env
 
   gateway:
     build: ./gateway
@@ -33,6 +35,8 @@ services:
     depends_on:
       - auth
       - event
+    env_file:
+    - .env
 
 volumes:
   mongo_data:
