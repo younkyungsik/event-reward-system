@@ -32,25 +32,29 @@ Gateway 서버에서 인증 검사를 하더라도, Event 서버가 사용자 ID
 
 ## 🛠️ 프로젝트 시작 방법
 1. Git설치(설치되어있으면 생략.)
+```bash
 https://git-scm.com/downloads
-
+```
 2. 설치할 폴더로 이동 후 Git명령어 입력(프로젝트 설치)
 ```bash
 $ git clone https://github.com/younkyungsik/event-reward-system.git
 ```
 2. 도커 설치(설치되어있으면 생략.)
+```bash
 https://docs.docker.com/desktop/setup/install/windows-install/
-
+```
 3. 도커 컨테이너 실행 명령어 입력
 ```bash
 $ docker compose up --build
 ```
 4. POSTMAN 설치(설치되어있으면 생략.)
+```bash
 https://www.postman.com/downloads/
+```
 
 5. API 테스트 진행(8개)
 
-## ※ 주의사항
+## ※ 테스트 진행시 주의사항
 1. API요청방식은 POST와 GET 방식이 존재합니다.
 요청시 Body, Params 구분을 명확히 해야하며 
 아래 "테스트 진행 순서"에 명시해두었습니다.
@@ -60,21 +64,8 @@ https://www.postman.com/downloads/
 토큰 없거나 유효하지 않으면 401 Unauthorized 에러 발생.)
 
 
-# 도커 명령어
-```bash
-# 1. 실행
-docker run
-# 2. 컨테이너 중지 및 삭제
-docker compose down
-# 3. 이미지 재빌드 (수정사항 반영)
-docker compose build
-# 4. 컨테이너 재실행
-docker compose up -d --build
-# 5. 합쳐진 명령어(중지 및 삭제 후 재빌드)
-docker compose down ; docker compose up --build
-```
-
 # 등록된 사용자
+```bash
 {
 	"username": "testuser",
     "password":"123123",
@@ -95,15 +86,7 @@ docker compose down ; docker compose up --build
     "password":"123123",
     "role":"AUDITOR"
 }
-
-# 테스트에 적합한 이벤트 선정
-출석체크 이벤트를 선정하여 로직을 구현했습니다.
-유저 활동 로그를 기록하여 출석한 N일에 대한 보상을 요청 및 지급합니다.
-
-## 테스트 절차 
-POSTMAN을 준비합니다.
-(로컬환경테스트는 반드시 다운로드 및 설치가 필요합니다.)
-https://www.postman.com/
+```
 
 # 테스트 팁
 로그인 후 전달 받은 JWT 토큰을 헤더에 다음과 같은 형태로 넣고 요청해야합니다.
@@ -381,8 +364,7 @@ Content-Type:application/json
 }
 
 
-
-# 개발/테스트 참고할 사항
+# 개발시 참고할 사항
 - (docker-compose.yml참고)
 mongo : 27017
 gateway : 3000
@@ -475,6 +457,18 @@ npm install class-validator class-transformer
 
 npm install @nestjs/serve-static #NestJS에서 정적 파일을 제공
 ```
-
+# 도커 명령어
+```bash
+# 1. 실행
+docker run
+# 2. 컨테이너 중지 및 삭제
+docker compose down
+# 3. 이미지 재빌드 (수정사항 반영)
+docker compose build
+# 4. 컨테이너 재실행
+docker compose up -d --build
+# 5. 합쳐진 명령어(중지 및 삭제 후 재빌드)
+docker compose down ; docker compose up --build
+```
 
 
