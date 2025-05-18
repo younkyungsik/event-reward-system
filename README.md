@@ -68,8 +68,8 @@ https://www.postman.com/downloads/
 ```bash
 {
 	"username": "testuser",
-    "password":"123123",
-    "role":"USER"
+  "password":"123123",
+  "role":"USER"
 }
 {
 	"username": "testadmin",
@@ -77,14 +77,14 @@ https://www.postman.com/downloads/
   "role":"ADMIN"
 }
 {
-    "username": "testoper",
-    "password": "123123",
-    "role": "OPERATOR",
+  "username": "testoper",
+  "password": "123123",
+  "role": "OPERATOR",
 }
 {
 	"username": "testauditor",
-    "password":"123123",
-    "role":"AUDITOR"
+  "password":"123123",
+  "role":"AUDITOR"
 }
 ```
 
