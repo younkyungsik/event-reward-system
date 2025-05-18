@@ -43,7 +43,7 @@ $ git clone https://github.com/younkyungsik/event-reward-system.git
 ```bash
 https://docs.docker.com/desktop/setup/install/windows-install/
 ```
-3. 도커 컨테이너 실행 명령어 입력
+3. 설치한 폴더로 이동 후 도커 컨테이너 실행 명령어 입력(서버 실행)
 ```bash
 $ docker compose up --build
 ```
