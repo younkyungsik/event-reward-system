@@ -376,19 +376,23 @@ Content-Type:application/json
 ```
 
 # 개발시 참고할 사항
+```bash
 - (docker-compose.yml참고)
 mongo : 27017
 gateway : 3000
 auth : 3001
 event : 3002
+```
 
 # event-reward-system\.env 파일은?
 MONGO_DB와, JWT_SECRET key를 설정할 수 있습니다.
 
 # 서버별 로그확인방법
+```bash
 docker-compose logs -f gateway
 docker-compose logs -f auth
 docker-compose logs -f event
+```
 
 # MongoDB 명령어
 ```bash
@@ -417,13 +421,15 @@ db.dropDatabase()
 ```
 
 # 서버 구성
-서버 주요 역할
+```bash
+# 서버 주요 역할
 Gateway Server : 모든 API 요청의 진입점, 인증, 권한 검사 및 라우팅
 Auth Server : 유저 정보 관리, 로그인, 역할 관리, JWT 발급
 Event Server : 이벤트 생성, 보상 정의, 보상 요청 처리, 지급 상태 저장
-
+```
 
 # 서버구조
+```bash
 ※ API요청은 전부 Gateway서버를 거칩니다.
 [Client]
    | HTTP POST /register
@@ -445,14 +451,17 @@ Event Server : 이벤트 생성, 보상 정의, 보상 요청 처리, 지급 상
    | 응답 전달
    ↓
 [Client]
-
 # 인증/인가 처리
 Auth 서버가 JWT를 발급하고, Gateway가 검증하는 구조
 
+```
+
 ## AUTH, GATEWAY, EVENT 설치
+```bash
 nest new auth
 nest new gateway
 nest new event
+```
 
 ## 사용된 의존성 설치 명령어 모음
 ```bash
