@@ -4,7 +4,7 @@ import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import { Event, EventSchema } from './schemas/event.schema';
 // Auth DB 연결 설정 추가
-import { RewardRequestModule } from '../reward-requests/reward-request.module';
+import { RewardRequestsModule } from '../reward-requests/reward-requests.module';
 
 @Module({
   imports: [
@@ -15,7 +15,8 @@ import { RewardRequestModule } from '../reward-requests/reward-request.module';
     MongooseModule.forRoot(process.env.MONGO_URI_AUTH || 'mongodb://mongo:27017/auth', {
       connectionName: 'AuthConnection',
     }),
-    forwardRef(() => RewardRequestModule),
+    //forwardRef(() => RewardRequestsModule),
+    RewardRequestsModule,
   ],
   controllers: [EventsController],
   providers: [EventsService],  // 필수

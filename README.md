@@ -1,4 +1,18 @@
 ## 🛠️ 프로젝트 시작 방법
+1. POSTMAN 설치(설치되어있으면 생략.)
+2. git pull(https://github.com/younkyungsik/event-reward-system/tree/master)
+3. 도커 컨테이너 실행
+4. API 테스트 진행(8개)
+
+## ※ 주의사항
+1. API요청방식은 POST와 GET 방식이 존재합니다.
+요청시 Body, Params 구분을 명확히 해야하며 
+아래 "테스트 진행 순서"에 명시해두었습니다.
+
+2. JWT 기반 인증이므로 JWT 인증 가드를 사용 및 추가되었습니다.
+(권한이 맞으면 요청 성공, 권한 없으면 403 Forbidden 에러 발생.
+토큰 없거나 유효하지 않으면 401 Unauthorized 에러 발생.)
+
 
 # 도커 명령어
 ```bash
@@ -40,28 +54,13 @@ docker compose down ; docker compose up --build
 출석체크 이벤트를 선정하여 로직을 구현했습니다.
 유저 활동 로그를 기록하여 출석한 N일에 대한 보상을 요청 및 지급합니다.
 
-# 테스트 절차 
+## 테스트 절차 
 POSTMAN을 준비합니다.
 (로컬환경테스트는 반드시 다운로드 및 설치가 필요합니다.)
 https://www.postman.com/
 
-# 회원가입
-http://localhost:3000/register
-{
-  "username": "사용자ID",
-  "password":"사용자PW",
-  "role":"사용자권한('USER','OPERATOR','AUDITOR','ADMIN')"
-}
-
-# 로그인
-http://localhost:3000/login
-{
-  "username": "사용자ID",
-  "password": "사용자PW"
-}
-
 # 테스트 팁
-1. 로그인 후 전달 받은 JWT 토큰을 헤더에 다음과 같은 형태로 넣고 요청해야합니다.
+로그인 후 전달 받은 JWT 토큰을 헤더에 다음과 같은 형태로 넣고 요청해야합니다.
 Authorization: Bearer <반환된 JWT_TOKEN 작성>
 Content-Type:application/json
 로그인시 응답: 
@@ -71,22 +70,27 @@ Content-Type:application/json
     "username": "testadmin",
     "role": "ADMIN"
 }
-※ JWT 기반 인증이므로 JWT 인증 가드를 사용 및 추가했습니다.
 
-(권한이 맞으면 요청 성공, 권한 없으면 403 Forbidden 에러 발생.
-토큰 없거나 유효하지 않으면 401 Unauthorized 에러 발생.)
 
-# 테스트 절차 (API 10개)
-# 0. 회원 가입 및 로그인 API
+# 테스트 진행 순서
+## 회원 가입 및 로그인 API
 1. 회원가입 API(확인완료)
 - 목적: 최초 회원가입시
 - 요청 방식: POST http://localhost:3000/register
 - 헤더: X
 - 요청 Body: 
 {
-	"username": "testuser",
-    "password":"123123",
-    "role":"USER"
+  "username": "testuser2",
+  "password": "123123",
+  "role": "USER"
+}
+- 응답: 
+{
+    "username": "testuser2",
+    "password": "$2b$10$ahVVkc3QMVNOLnNhTY0qRuFIdWkJrY7xm2VGunvafgy.Pi/Yd.8eC",
+    "role": "USER",
+    "_id": "6829c3fe98099d565a6d71d1",
+    "__v": 0
 }
 
 2. 로그인 API(확인완료)
@@ -95,13 +99,19 @@ Content-Type:application/json
 - 헤더: X
 - 요청 Body: 
 {
-	"username": "testuser",
-    "password":"123123",
-    "role":"USER"
+  "username": "testuser2",
+  "password": "123123"
+}
+- 응답: 
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODI5YzNmZTk4MDk5ZDU2NWE2ZDcxZDEiLCJ1c2VybmFtZSI6InRlc3R1c2VyMiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQ3NTgzMjU1LCJleHAiOjE3NDc1ODY4NTV9.EPTMQrza1VKEAJ8qkG1Kaas9NgZb57sO12iWuqVt9-Q",
+    "userId": "6829c3fe98099d565a6d71d1",
+    "username": "testuser2",
+    "role": "USER"
 }
 
-# 1. 이벤트 등록 / 조회 API
-3. 이벤트 생성 API(확인완료)
+## 이벤트 등록 / 조회 API
+3. 이벤트 등록 API(확인완료)
 - 목적: 운영자 또는 관리자가 새로운 이벤트를 생성
 - 요청 방식: POST http://localhost:3000/events/create
 - 권한: ADMIN, OPERATOR
@@ -110,103 +120,95 @@ Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
 - 요청 Body: 
 {
-  "title": "로그인 3일",
-  "description": "3일 이상 로그인 시 보상 지급",
+  "title": "출석 이벤트",
+  "creator": "testadmin",
+  "description": "1일 이상 로그인 시 보상 지급",
   "conditions": {
-    "loginDays": 3
+    "loginDays": 1
   },
-  "status": "true",
   "startDate": "2025-05-01T00:00:00.000Z",
   "endDate": "2025-05-31T23:59:59.000Z",
-  "creator": "testadmin"
+  "status": "true"
 }
 - 응답 Body: 
 {
-  "title":"로그인 3일",
-  "conditions":{"loginDays":3},
-  "status":true,
-  "startDate":"2025-05-01T00:00:00.000Z","endDate":"2025-05-31T23:59:59.000Z",
-  "creator":"testadmin",
-  "_id":"6828bbd4673ec0d234bb6984",
-  "__v":0
+    "title": "출석 이벤트",
+    "conditions": {
+        "loginDays": 1
+    },
+    "status": true,
+    "startDate": "2025-05-01T00:00:00.000Z",
+    "endDate": "2025-05-31T23:59:59.000Z",
+    "creator": "testadmin",
+    "_id": "6829f1e6ab40fb15725603a3",
+    "__v": 0
 }
 
-4. 이벤트 목록 "전체 조회" API(확인완료)
+4. 이벤트 "목록 및 상세" 조회 API(확인완료)
 - 목적: 등록된 모든 이벤트들을 리스트로 확인
-- 요청 방식: GET http://localhost:3000/events/select
+- 요청 방식: POST http://localhost:3000/events/select
 - 권한: ADMIN, OPERATOR
 - 헤더: O
 Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
+- 필터 요청 Body(선택적): 
+{
+	"title": "출석 이벤트"
+}
 - 응답 Body: 
 [
-  {
-    "id": "testadmin",
-    "title": "출석 이벤트",
-    "description": "3일 이상 로그인 시 보상",
-    "conditions": {
-      "loginDays": 3
-    },
-    "status": "ACTIVE"
-  },
-  ...
+    {
+        "_id": "6829040878fee900658610ce",
+        "title": "출석 이벤트",
+        "conditions": {
+            "loginDays": 1
+        },
+        "status": true,
+        "startDate": "2025-05-01T00:00:00.000Z",
+        "endDate": "2025-05-31T23:59:59.000Z",
+        "creator": "testadmin",
+        "__v": 0
+    },...
 ]
 
-5. 특정 이벤트 "상세(등록자 기반) 조회" API(확인완료)
-- 목적: 특정 이벤트의 조건, 기간, 상태 등 상세 정보 확인
-- 요청 방식: GET http://localhost:3000/events/select/:username
-- 예시: GET http://localhost:3000/events/select/testadmin
-- 권한: ADMIN, OPERATOR
-- 헤더: O
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-- 응답 Body: 
-[
-  {
-    "_id":"6828ba8e879861bc9902f823",
-    "title":"로그인 3일",
-    "creator":"testadmin",
-    "conditions":{"loginDays":3},
-    "status":true,
-    "startDate":"2025-05-01T00:00:00.000Z","endDate":"2025-05-31T23:59:59.000Z",
-    "__v":0
-    }
-]
-
-# 2. 보상 등록 / 조회 API
-6. 보상 등록 API(확인완료)
+## 보상 등록 / 조회 API
+5. 보상 등록 API(확인완료)
 - 목적: 이벤트에 보상 정보(포인트, 아이템, 쿠폰 등)를 연결
 - 요청 방식: POST http://localhost:3000/rewards/create
 - 권한: OPERATOR, ADMIN
 - 헤더: O
 Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
-요청 Body: 
+- 요청 Body: 
 {
-  "eventId": "6828ba8e879861bc9902f823",
+  "eventId": "6829040878fee900658610ce",
   "creator": "testadmin",
   "type": "POINT",
   "amount": 500,
-  "description": "출석 3일 보상"
+  "description": "출석 1일 보상등록"
 }
 - 응답 Body: 
 {
-  "eventId":"6828ba8e879861bc9902f823",
-  "creator":"testadmin",
-  "type":"POINT",
-  "description":"출석 3일 보상",
-  "amount":500,
-  "_id":"6828c054673ec0d234bb69a2",
-  "__v":0
+    "eventId": "6829040878fee900658610ce",
+    "creator": "testadmin",
+    "type": "POINT",
+    "description": "출석 1일 보상등록",
+    "amount": 500,
+    "_id": "682a045b56e312291404a731",
+    "__v": 0
 }
 
-7. 이벤트에 연결된 보상 "전체 조회" API(확인완료)
+6. 이벤트에 연결된 보상 "전체 및 상세" 조회 API(확인완료)
 - 목적: 특정 이벤트에 어떤 보상이 등록되어 있는지 확인
 - 요청 방식: GET http://localhost:3000/rewards/select
 - 권한: OPERATOR, ADMIN, AUDITOR
 - 헤더: O
 Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
+- 필터 요청 Body(선택적): 
+{
+    "type": "POINT"
+}
 - 응답 Body: 
 [
   {
@@ -221,79 +223,120 @@ Content-Type: application/json
   ...
 ]
 
-8. 이벤트에 연결된 보상 "상세(등록자 기반) 조회" API(확인완료)
-- 목적: 특정 이벤트에 어떤 보상이 등록되어 있는지 확인
-- 요청 방식: GET http://localhost:3000/rewards/select/:username
-- 예시: GET http://localhost:3000/rewards/select/testadmin
-- 권한: 모든 인증된 사용자 가능
-- 헤더: O
+## 유저 보상 요청 
+7. 보상 요청 API(확인완료)
+- 목적: 유저가 특정 이벤트에 대해 보상을 요청
+- 요청 방식: POST http://localhost:3000/reward-requests
+- 권한: USER
+- 헤더:
 Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
-- 응답 Body: 
-[
-  {
-    "_id":"6828aa3b1a22319a87949797",
-    "eventId":"682884c42c2efeae0a18eecc",
-    "creator":"testadmin",
-    "type":"POINT",
-    "description":"출석 3일 보상",
-    "amount":500,
-    "__v":0
-  },
-  ...
-]
-
-# 3. 유저 보상 요청 
-9. 보상 요청 API
-목적: 유저가 특정 이벤트에 대해 보상을 요청
-요청 방식: POST http://localhost:3000/reward-requests
-권한: USER
-헤더:
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
+- 요청 Body: 
+{
+    "eventId": "6828ba8e879861bc9902f823",
+    "rewardId": "6828c054673ec0d234bb69a2"
+}
 - 응답1(조건 충족 시):
 {
-  "status": "SUCCESS",
-  "message": "보상이 지급되었습니다.",
-  "data": {
-    "eventId": "665abc1234...",
-    "status": "SUCCESS"
-  }
+    "success": true,
+    "message": "보상 요청 성공",
+    "data": {
+        "userId": "68283b762d1b5a5a94e611a1",
+        "eventId": "6828ba8e879861bc9902f823",
+        "rewardId": "6828c054673ec0d234bb69a2",
+        "status": "SUCCESS",
+        "_id": "6829c1da411aba8b950a9ca8",
+        "createdAt": "2025-05-18T11:17:46.551Z",
+        "updatedAt": "2025-05-18T11:17:46.551Z",
+        "__v": 0
+    }
 }
-- 응답2(조건 불충족 시):
+- 응답2(중복 요청 시):
 {
-  "status": "FAILURE",
-  "message": "조건을 충족하지 못했습니다.",
-  "reason": "로그인 3일 조건 미충족"
-}
-- 응답3(중복 요청 시):
-{
-  "status": "DUPLICATE",
-  "message": "이미 요청한 이벤트입니다."
+    "success": false,
+    "message": "보상 조건을 충족하지 못했습니다.",
+    "data": {
+        "userId": "68283b762d1b5a5a94e611a1",
+        "eventId": "6828ba8e879861bc9902f823",
+        "rewardId": "6828c054673ec0d234bb69a2",
+        "status": "FAILED",
+        "reason": "이미 요청된 보상입니다."
+    }
 }
 
-# 4. 유저 보상 요청 내역 확인
-10. 보상 요청 이력 조회 API
-목적: 본인 또는 전체 유저의 보상 요청 이력을 조회
-요청 방식: GET http://localhost:3000/reward-requests
-권한:
-USER: 본인 이력만 조회
-AUDITOR, ADMIN: 전체 이력 조회 가능
-필터 (선택 적용): ?eventId=...&status=SUCCESS|FAILURE|DUPLICATE
-헤더:
+## 유저 보상 요청 내역 확인
+8. 보상 요청 이력 조회 API(확인완료)
+- 목적: 본인 또는 전체 유저의 보상 요청 이력을 필터링 조회
+- 요청 방식: GET http://localhost:3000/reward-requests/select
+- 권한:
+1) USER: 본인 이력 필터링 조회
+2) AUDITOR, ADMIN: 전체 이력 필터링 조회
+- 헤더: O
 Authorization: Bearer <JWT_TOKEN>
-- 응답:
-[
-  {
-    "userId": "user123",
-    "eventId": "665abc1234...",
-    "status": "SUCCESS",
-    "requestedAt": "2025-05-16T12:00:00.000Z"
-  },
-  ...
-]
+Content-Type:application/json
+- 필터 요청(선택적) "Params" 예시: 
+1) http://localhost:3000/reward-requests/select?status=SUCCESS
+2) status:SUCCESS
+- 응답1(USER):
+{
+    "success": true,
+    "message": "보상 요청 이력 조회 성공",
+    "data": [
+        {
+            "_id": "6829cb561290cf34cc7cc490",
+            "userId": "68283b762d1b5a5a94e611a1",
+            "eventId": "6828ba8e879861bc9902f823",
+            "rewardId": "6828c054673ec0d234bb69a2",
+            "status": "SUCCESS",
+            "reason": "보상을 요청합니다.",
+            "createdAt": "2025-05-18T11:58:14.828Z",
+            "updatedAt": "2025-05-18T11:58:14.828Z",
+            "__v": 0
+        }
+    ]
+}
+- 응답2(ADMIN):
+{
+    "success": true,
+    "message": "보상 요청 이력 조회 성공",
+    "data": [
+        {
+            "_id": "682a0b534bd98867d92dbc80",
+            "userId": "68283b762d1b5a5a94e611a1",
+            "eventId": "6828ba8e879861bc9902f823",
+            "rewardId": "6828c054673ec0d234bb69a2",
+            "status": "FAILED",
+            "reason": "이미 요청된 보상입니다.",
+            "createdAt": "2025-05-18T16:31:15.235Z",
+            "updatedAt": "2025-05-18T16:31:15.235Z",
+            "__v": 0
+        },
+        ...
+    ]
+}
+- 응답3(ADMIN "필터링" 시)
+{
+    "success": true,
+    "message": "보상 요청 이력 조회 성공",
+    "data": [
+        {
+            "_id": "6829d1006c886ccb0ef7869b",
+            "userId": "6829c3fe98099d565a6d71d1",
+            "eventId": "6828ba8e879861bc9902f823",
+            "rewardId": "6828c054673ec0d234bb69a2",
+            "status": "SUCCESS",
+            "reason": "보상을 요청합니다.",
+            "createdAt": "2025-05-18T12:22:24.024Z",
+            "updatedAt": "2025-05-18T12:22:24.024Z",
+            "__v": 0
+        },
+        ...
+    ]
+}
 
-# 개발시 참고할 사항
+
+
+# 개발/테스트 참고할 사항
 - (docker-compose.yml참고)
 mongo : 27017
 gateway : 3000
@@ -308,21 +351,31 @@ docker-compose logs -f gateway
 docker-compose logs -f auth
 docker-compose logs -f event
 
+# MongoDB 명령어
+```bash
 # MongoDB 컨테이너 접속
 docker exec -it mongo mongosh
 # DB 목록 확인
 show dbs
 # 컬렉션 목록 확인
 show collections
+# collection 삭제
+db.[col이름].drop()
 # 유저 DB로 이동
 use auth-db
 # 유저 전체 조회
 db.users.find()
 # 유저 필터링 조회
 db.users.find({ role: "USER" }).pretty()
-# 유저 삭제
-db.users.deleteMany({ username: "testuser" })
-
+# 삭제
+db.[col이름].deleteMany({ username: "testuser" })
+db.[col이름].remove({ "status":"FAILED" })
+# 로그인 로그 조회
+db.loginlogs.find().pretty()
+db["login-logs"].find().pretty()
+# Database 삭제
+db.dropDatabase()
+```
 
 # 서버 구성
 서버 주요 역할
@@ -356,7 +409,6 @@ Event Server : 이벤트 생성, 보상 정의, 보상 요청 처리, 지급 상
 
 # 인증/인가 처리
 Auth 서버가 JWT를 발급하고, Gateway가 검증하는 구조
-
 
 ## AUTH, GATEWAY, EVENT 설치
 nest new auth

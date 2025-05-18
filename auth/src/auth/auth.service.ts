@@ -3,14 +3,14 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
-import { UserActivityLogService } from '../user-activity-log/user-activity-log.service';
+import { LoginLogService } from '../login-log/login-log.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly logService: UserActivityLogService,
+    private readonly logService: LoginLogService,
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {

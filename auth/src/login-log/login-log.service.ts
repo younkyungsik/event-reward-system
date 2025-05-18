@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserActivityLog } from './user-activity-log.schema';
+import { LoginLog } from './login-log.schema';
 import { Model } from 'mongoose';
 
 // 유저 활동 로그 기록 서비스
 @Injectable()
-export class UserActivityLogService {
+export class LoginLogService {
   constructor(
-    @InjectModel(UserActivityLog.name)
-    private readonly logModel: Model<UserActivityLog>,
+    @InjectModel(LoginLog.name)
+    private readonly logModel: Model<LoginLog>,
   ) {}
 
   async logUserLogin(userId: string): Promise<void> {

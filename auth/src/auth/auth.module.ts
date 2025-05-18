@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserActivityLogModule } from '../user-activity-log/user-activity-log.module';
+import { LoginLogModule } from '../login-log/login-log.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { UserActivityLogModule } from '../user-activity-log/user-activity-log.mo
         signOptions: { expiresIn: '1h' },
       }),
     }),
-    UserActivityLogModule, //유저 활동 로그 기록 모듈
+    LoginLogModule, //유저 활동 로그 기록 모듈
   ],
   providers: [AuthService],
   controllers: [AuthController],

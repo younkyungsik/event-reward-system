@@ -1,21 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-export type RewardRequestDocument = RewardRequest & Document;
+import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class RewardRequest {
-  @Prop({ type: Types.ObjectId, required: true })
-  userId: Types.ObjectId;
+export class RewardRequest extends Document {
+  @Prop({ required: true })
+  userId: string;
 
-  @Prop({ type: Types.ObjectId, required: true })
-  eventId: Types.ObjectId;
+  @Prop({ required: true })
+  eventId: string;
 
-  @Prop({ type: Types.ObjectId, required: true })
-  rewardId: Types.ObjectId;
+  @Prop({ required: true })
+  rewardId: string;
 
-  @Prop({ required: true, enum: ['PENDING', 'SUCCESS', 'FAILED'] })
-  status: string;
+  @Prop({ required: true, enum: ['SUCCESS', 'FAILED'] })
+  status: 'SUCCESS' | 'FAILED';
 
   @Prop()
   reason?: string;

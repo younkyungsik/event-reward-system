@@ -1,9 +1,10 @@
-import { Controller, Post, Body, UseGuards, Get, Param, Delete} from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get, Param, Delete, Query} from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
+import { RequestWithUser } from '../common/interfaces/request-with-user.interface';
 
 //이벤트 생성 API controller
 @Controller('events')
@@ -19,20 +20,13 @@ export class EventsController {
     return this.eventsService.create(dto);
   }
 
-  // 등록된 모든 이벤트 목록 조회
-  @Get('select') // GET /events/select
+  // 이벤트 "목록 및 상세" 조회 API
+  @Post('select') // GET /events/select
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('OPERATOR', 'ADMIN') //운영자, 관리자
-  getAllEvents() {
-    return this.eventsService.findAll();
-  }
-
-  // 생성자가 만든 이벤트 상세 목록 조회
-  @Get('select/:creator')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('OPERATOR', 'ADMIN') // 운영자, 관리자
-  getEventsByCreator(@Param('creator') creator: string) {
-    return this.eventsService.findAllByCreator(creator);
+  @Roles('OPERATOR', 'ADMIN')
+  getAllEventsByPost(@Req() req: RequestWithUser, @Body() body: any) {
+    const user = req.user as any;
+    return this.eventsService.findAll(user, body);
   }
 
   // 이벤트 id(seq)하나 삭제

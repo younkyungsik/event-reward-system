@@ -16,10 +16,53 @@ export class EventsService {
     }
     
     //전체검색
-    async findAll(): Promise<any[]> {
-        const eventList = await this.eventModel.find().exec();
-        return this.eventModel.find().exec();
+    async findAll(
+        user: { 
+            userId: string; 
+            role: string 
+        }, 
+        filter: { 
+            title?: string; 
+            description?: string; 
+            conditions?: Record<string, any>; 
+            status?: Boolean; 
+            startDate?: string; 
+            endDate?: string; 
+            creator?: string 
+    }): Promise<any[]> {
+        const query: any = {};
+
+        // 필터링 기능 eventId별
+        if (filter.title) {
+            query.title = filter.title;
+        }
+        // 필터링 기능 description별
+        if (filter.description) {
+            query.description = filter.description;
+        }
+        // 필터링 기능 conditions별
+        if (filter.conditions) {
+            query.conditions = filter.conditions;
+        }
+        // 필터링 기능 status별
+        if (filter.status) {
+            query.status = filter.status;
+        }
+        // 필터링 기능 startDate별
+        if (filter.startDate) {
+            query.startDate = filter.startDate;
+        }
+        // 필터링 기능 endDate별
+        if (filter.endDate) {
+            query.endDate = filter.endDate;
+        }
+        // 필터링 기능 creator별
+        if (filter.creator) {
+            query.creator = filter.creator;
+        }
+        return this.eventModel.find(query).exec();
     }
+    
 
     //생성자가 만든 모든 이벤트 검색
     async findAllByCreator(creator: string): Promise<Event[]> {
@@ -29,16 +72,6 @@ export class EventsService {
         }
         return events;
     }
-    //id로 검색
-    /*
-    async findById(id: string): Promise<Event> {
-        const event = await this.eventModel.findById(id).exec(); // exec 추가
-        if (!event) {
-        throw new NotFoundException(`이벤트(id: ${id})를 찾을 수 없습니다.`); 
-        }
-        return event; 
-    }
-    */
 
     // 삭제
     async delete(id: string): Promise<{ message: string }> {

@@ -1,9 +1,10 @@
-import { Controller, Post, Body, UseGuards, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get, Param, Delete } from '@nestjs/common';
 import { RewardsService } from './rewards.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
+import { RequestWithUser } from '../common/interfaces/request-with-user.interface';
 
 //보상 등록 API controller
 @Controller('rewards')
@@ -20,22 +21,15 @@ export class RewardsController {
   }
 
   // 등록된 모든 보상 목록 조회
-  @Get('select') // GET /select
+  @Post('select') // GET /select
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('OPERATOR', 'ADMIN', 'AUDITOR') //운영자, 관리자, 감사
-  getAllEvents() {
-    return this.rewardsService.findAll();
+  getAllEvents(@Req() req: RequestWithUser, @Body() body: any) {
+    const user = req.user as any;
+    return this.rewardsService.findAll(user, body);
   }
 
-  // 생성자가 만든 보상 상세 목록 조회
-  @Get('select/:creator')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('OPERATOR', 'ADMIN', 'AUDITOR') //운영자, 관리자, 감사
-  getEventsByCreator(@Param('creator') creator: string) {
-    return this.rewardsService.findAllByCreator(creator);
-  }
-
-  // 보상 id(seq)하나 삭제
+  // 보상 id(seq) 삭제
   @Delete('delete/:id') // DELETE /select/:id
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'OPERATOR') //운영자, 관리자
