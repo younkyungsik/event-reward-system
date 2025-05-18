@@ -32,16 +32,22 @@ Gateway 서버에서 인증 검사를 하더라도, Event 서버가 사용자 ID
 
 ## 🛠️ 프로젝트 시작 방법
 1. Git설치(설치되어있으면 생략.)
-2. 설치할 폴더 우클릭 -> 
-  Open Git Bash here클릭 -> 
-  git init(명령어입력) -> 
-  git init(명령어입력) -> 
-  git config --global user.name "younkyungsik"
-  git config --global user.email "yks1634@gmail.com"
+https://git-scm.com/downloads
 
-2. POSTMAN 설치(설치되어있으면 생략.)
-3. git pull(https://github.com/younkyungsik/event-reward-system/tree/master)
-4. 도커 컨테이너 실행
+2. 설치할 폴더로 이동 후 Git명령어 입력(프로젝트 설치)
+```bash
+$ git clone https://github.com/younkyungsik/event-reward-system.git
+```
+2. 도커 설치(설치되어있으면 생략.)
+https://docs.docker.com/desktop/setup/install/windows-install/
+
+3. 도커 컨테이너 실행 명령어 입력
+```bash
+$ docker compose up --build
+```
+4. POSTMAN 설치(설치되어있으면 생략.)
+https://www.postman.com/downloads/
+
 5. API 테스트 진행(8개)
 
 ## ※ 주의사항
