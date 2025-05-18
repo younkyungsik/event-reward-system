@@ -90,19 +90,22 @@ https://www.postman.com/downloads/
 
 # 테스트 팁
 로그인 후 전달 받은 JWT 토큰을 헤더에 다음과 같은 형태로 넣고 요청해야합니다.
+```bash
 Authorization: Bearer <반환된 JWT_TOKEN 작성>
 Content-Type:application/json
-로그인시 응답: 
+
+# 로그인시 응답: 
 {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODI4MmYyNDExNGI0ZWVmNTQwZmQ2ZTIiLCJ1c2VybmFtZSI6InRlc3RhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0NzQ3NzI0NCwiZXhwIjoxNzQ3NDgwODQ0fQ.vfn_v4eY4Qd4HXDkEfM8ImIuz4KmQErh-H5uxq7v8hU",
     "userId": "68282f24114b4eef540fd6e2",
     "username": "testadmin",
     "role": "ADMIN"
 }
-
+```
 
 # 테스트 진행 순서
 ## 회원 가입 및 로그인 API
+```bash
 1. 회원가입 API(확인완료)
 - 목적: 최초 회원가입시
 - 요청 방식: POST http://localhost:3000/register
@@ -138,8 +141,10 @@ Content-Type:application/json
     "username": "testuser2",
     "role": "USER"
 }
+```
 
 ## 이벤트 등록 / 조회 API
+```bash
 3. 이벤트 등록 API(확인완료)
 - 목적: 운영자 또는 관리자가 새로운 이벤트를 생성
 - 요청 방식: POST http://localhost:3000/events/create
@@ -199,8 +204,10 @@ Content-Type: application/json
         "__v": 0
     },...
 ]
+```
 
 ## 보상 등록 / 조회 API
+```bash
 5. 보상 등록 API(확인완료)
 - 목적: 이벤트에 보상 정보(포인트, 아이템, 쿠폰 등)를 연결
 - 요청 방식: POST http://localhost:3000/rewards/create
@@ -251,8 +258,10 @@ Content-Type: application/json
   },
   ...
 ]
+```
 
 ## 유저 보상 요청 
+```bash
 7. 보상 요청 API(확인완료)
 - 목적: 유저가 특정 이벤트에 대해 보상을 요청
 - 요청 방식: POST http://localhost:3000/reward-requests
@@ -292,8 +301,10 @@ Content-Type: application/json
         "reason": "이미 요청된 보상입니다."
     }
 }
+```
 
 ## 유저 보상 요청 내역 확인
+```bash
 8. 보상 요청 이력 조회 API(확인완료)
 - 목적: 본인 또는 전체 유저의 보상 요청 이력을 필터링 조회
 - 요청 방식: GET http://localhost:3000/reward-requests/select
@@ -362,7 +373,7 @@ Content-Type:application/json
         ...
     ]
 }
-
+```
 
 # 개발시 참고할 사항
 - (docker-compose.yml참고)
